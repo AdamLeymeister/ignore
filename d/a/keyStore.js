@@ -13,7 +13,7 @@ const useKeys = create((set) => ({
 
       const updateIndex = ns.keys.findIndex((row) => {
         let result = false;
-        if (row.id == updateIdx.id) {
+        if (row.id === updateIdx.id) {
           result = true;
         }
         return result;
