@@ -1,0 +1,15 @@
+.table {
+  height: 205px;
+}
+
+.friend {
+  display: flex;
+  text-align: center;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+}
+
+.label {
+  padding: 1rem;
+}
