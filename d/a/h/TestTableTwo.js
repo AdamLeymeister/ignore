@@ -1,92 +1,95 @@
-import React, { useRef, useEffect, useMemo } from "react";
-import "tabulator-tables/dist/css/tabulator_midnight.min.css";
+import React, { useCallback, useEffect, useRef } from "react";
 import { TabulatorFull as Tabulator } from "tabulator-tables";
+import { tableData } from "./data";
+import "tabulator-tables/dist/css/tabulator.min.css";
+import "./TestTable.css";
+import * as ReactDOMServer from "react-dom/server";
 
-
-// define the Table component
-const Table = ({ tdata }) => {
-// define the columns of the table
-const columns = useMemo(
-  () => [
-    { title: "Name", field: "name" },
-    { title: "Value", field: "value" },
-    {
-      title: "Actions",
-      field: "",
-      formatter: "tickCross",
-      cellClick: (e, cell) => {
-        // update the row data when the "Actions" cell is clicked
-        const row = cell.getRow();
-        const rowData = row.getData();
-        if (rowData.added) {
-          row.update({ added: !rowData?.added, deleted: !rowData?.deleted });
-        } else if (rowData.deleted) {
-          row.update({ added: !rowData?.added, deleted: !rowData.deleted });
-        } else {
-          row.update({ deleted: true });
-        }
-      },
-    },
-  ],
-  []
-);
-
-// define a function that will be used to format the rows of the table
-const rowFormatter = useMemo(
-  () => (row) => {
-    // get the data for the row
-    const data = row.getData();
-
-    // if the row is selected, add a class to highlight it
-    if (data.isSelected) {
-      row.getElement().classList.add("selected-row");
-    } else {
-      row.getElement().classList.remove("selected-row");
-    }
-
-    // set the background color based on the data
-    if (data.added) {
-      row.getElement().style.color = "green";
-    }
-    if (data.deleted) {
-      row.getElement().style.color = "red";
-    }
-    if (data.updated) {
-      row.getElement().style.color = "yellow";
-    }
-  },
-  []
-);
-
-  // create a reference to the div that will contain the table
+const TestTable = () => {
   const tableRef = useRef(null);
+  const handleFriendClick = () => {
+    console.log("FRIEND");
+  };
 
-  // create the table when the component is mounted
+  const setupTable = useCallback(() => {
+    const InviteCheckbox = ({ name, checked, onChange }) => {
+      const label = React.createElement(
+        "label",
+        {},
+        React.createElement("input", {
+          type: "checkbox",
+          name,
+          checked,
+          onChange,
+        }),
+        name
+      );
+      return React.createElement("div", { className: "friend" }, label);
+    };
+    const table = new Tabulator(tableRef.current, {
+      height: 205,
+      data: tableData ?? [],
+      layout: "",
+      columns: [
+        { title: "Name", field: "name", width: 150 },
+        { title: "Age", field: "age", hozAlign: "left", formatter: "progress" },
+        { title: "Favourite Color", field: "col" },
+        {
+          title: "Date Of Birth",
+          field: "dob",
+          sorter: "date",
+          hozAlign: "center",
+        },
+        {
+          title: "invite",
+          field: "friends",
+          hozAlign: "center",
+          formatter: function (cell) {
+            const friends = cell.getValue();
+            const friendList = friends
+              .map((friend) =>
+                React.createElement(InviteCheckbox, {
+                  id: friend.id,
+                  checked: friend.added,
+                  onChange: handleFriendClick,
+                })
+              )
+              .map((element) => ReactDOMServer.renderToString(element))
+              .join("");
+
+            return friendList
+          },
+        },
+        {
+          title: "Friends",
+          field: "friends",
+          hozAlign: "center",
+          formatter: function (cell) {
+            const friends = cell.getValue();
+            const friendList = friends
+              .map((friend) => friend.name)
+              .join("<br>");
+
+            return `<div class="friend">
+                      <div class="label">${friendList}</div>
+                    </div>`;
+          },
+        },
+      ],
+    });
+
+    return table;
+  }, []);
+
   useEffect(() => {
-    if (tdata.length > 0) {
-      try {
-        const table = new Tabulator(tableRef.current, {
-          // set the data and columns of the table
-          data: tdata,
-          columns,
-          // set the row formatter
-          rowFormatter,
-          // enable row selection
-          selectable: true,
-        });
-        // clean up the table when the component is unmounted
-        return () => table.destroy();
-      } catch (e) {
-        console.error("Error creating table:", e);
-      }
-    } else {
-      console.log("none");
-    }
-  }, [tdata, columns, rowFormatter]);
+    console.log(tableData);
+    const table = setupTable();
+    return () => {
+      table.destroy();
+    };
+  }, [setupTable, tableData]);
 
-  // render the div that will contain the table
-  return <div key="table-container" ref={tableRef} />;
+  return <div className="test-table" ref={tableRef} />;
 };
 
-// export the Table component
-export default Table;
+export default TestTable;
