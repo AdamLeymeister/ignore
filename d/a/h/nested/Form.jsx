@@ -1,51 +1,66 @@
-import React, { useCallback, useEffect, useRef } from 'react';
-import { TabulatorFull as Tabulator } from 'tabulator-tables';
-import {tableData} from './data';
+import React, { useEffect, useRef } from "react";
+import { TabulatorFull as Tabulator } from "tabulator-tables";
+import { tableData } from "./data";
 import "tabulator-tables/dist/css/tabulator.min.css";
 import "./TestTable.css";
 
 const TestTable = () => {
   const tableRef = useRef(null);
 
-  const setupTable = useCallback(() => {
-    const table = new Tabulator(tableRef.current, {
-      height: 205,
-      data: tableData ?? [],
-      layout: 'fitColumns',
-      columns: [
-        { title: 'Name', field: 'name', width: 150 },
-        { title: 'Age', field: 'age', hozAlign: 'left', formatter: 'progress' },
-        { title: 'Favourite Color', field: 'col' },
-        { title: 'Date Of Birth', field: 'dob', sorter: 'date', hozAlign: 'center' },
-        {
-          title: 'Friends',
-          field: 'friends',
-          hozAlign: 'center',
-          formatter: function (cell) {
-            const friends = cell.getValue();
-            const friendList = friends.map((friend) => friend.name).join('<br>');
-
-            return `<div class="friend">
-                      <div class="label">Friend</div>
-                      <div class="label">${friendList}</div>
-                    </div>`;
+  useEffect(() => {
+    if (tableRef.current) {
+      const table = new Tabulator(tableRef.current, {
+        data: tableData,
+        layout: "fitData",
+        columns: [
+          { title: "ID", field: "id" },
+          { title: "Name", field: "name" },
+          {
+            title: "Friends",
+            field: "friends",
+            formatter: function (cell, formatterParams, onRendered) {
+              const friends = cell.getValue();
+              console.log(friends);
+              const friendNames = friends.map((friend) => friend.name);
+              return friendNames.join(", ");
+            },
           },
-        },
-      ],
-    });
+          {
+            title: "Checkbox",
+            field: "friends",
+            formatter: function (cell, formatterParams, onRendered) {
+              const friends = cell.getValue();
 
-    return table;
+              // Create a container element to hold the checkboxes
+              const checkboxContainer = document.createElement("div");
+
+              // Loop through each friend and create a checkbox for each
+              for (const friend of friends) {
+                const checkbox = document.createElement("input");
+                checkbox.type = "checkbox";
+                checkbox.addEventListener("click", () => {
+                  console.log("Clicked");
+                });
+                checkboxContainer.appendChild(checkbox);
+
+                const label = document.createElement("label");
+                label.textContent = friend.name;
+                checkboxContainer.appendChild(label);
+
+                checkboxContainer.appendChild(document.createElement("br"));
+              }
+              return checkboxContainer;
+            },
+          },
+        ],
+      });
+      return () => {
+        table.destroy();
+      };
+    }
   }, []);
 
-  useEffect(() => {
-    console.log(tableData)
-    const table = setupTable();
-    return () => {
-      table.destroy();
-    };
-  }, [setupTable, tableData]);
-
-  return <div className="test-table" ref={tableRef} />;
+  return <div ref={tableRef}></div>;
 };
 
 export default TestTable;
