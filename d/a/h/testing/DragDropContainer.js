@@ -36,7 +36,7 @@ const Column = ({
         const Child = childComponent;
         return (
           <Child
-            key={card.id}
+            key={card.id + "-" + index}
             id={card.id}
             title={card.title}
             content={card.content}
@@ -121,37 +121,38 @@ const DragDropContainer = ({
     setCurrentPos(null);
   };
 
-  const handleDragOver = (event, index, columnId) => {
-    event.preventDefault();
-    if (!dragging) {
+const handleDragOver = (event, index, columnId) => {
+  event.preventDefault();
+  if (!dragging) {
+    return;
+  }
+  let draggedIndex = parseInt(dragItem.current.position);
+  let dropIndex = index;
+  if (draggedIndex === dropIndex && columnId === dragItem.current.columnId) {
+    return;
+  }
+
+  let draggedCard = cards.find((card) => card.id === dragItem.current.id);
+
+  let newCards = [...cards];
+
+  if (draggedCard.columnId === columnId) {
+    if (draggedIndex === dropIndex) {
       return;
     }
-    let draggedIndex = parseInt(dragItem.current.position);
-    let dropIndex = index;
-    if (draggedIndex === dropIndex && columnId === dragItem.current.columnId) {
-      return;
-    }
+    newCards.splice(draggedIndex, 1);
+    newCards.splice(dropIndex, 0, draggedCard);
+  } else {
+    newCards = cards.filter((card) => card.id !== draggedCard.id);
+    draggedCard.columnId = columnId;
+    newCards.splice(dropIndex, 0, draggedCard);
+  }
 
-    let draggedCard = cards.find((card) => card.id === dragItem.current.id);
+  setCards(newCards);
+  dragItem.current.position = dropIndex;
+  dragItem.current.columnId = columnId;
+};
 
-    let newCards = [...cards];
-
-    if (draggedCard.columnId === columnId) {
-      if (draggedIndex === dropIndex) {
-        return;
-      }
-      newCards.splice(draggedIndex, 1);
-      newCards.splice(dropIndex, 0, draggedCard);
-    } else {
-      newCards = cards.filter((card) => card.id !== draggedCard.id);
-      draggedCard.columnId = columnId;
-      newCards.splice(dropIndex, 0, draggedCard);
-    }
-
-    setCards(newCards);
-    dragItem.current.position = dropIndex;
-    dragItem.current.columnId = columnId;
-  };
 
   const handleDragEnter = (event, columnId) => {
     event.preventDefault();

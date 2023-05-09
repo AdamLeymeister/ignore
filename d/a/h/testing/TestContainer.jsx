@@ -2,16 +2,15 @@ import React, { useState } from "react";
 import DragDropContainer from "./DragDropContainer";
 import Card from "./components/Card"; // Import Card component
 import "./App.css";
-import { v4 as uuid } from "uuid";
 
 const TestContainer = () => {
   const [originalBgColor, setOriginalBgColor] = useState(null);
   const [currentPos, setCurrentPos] = useState(null);
   const [cards, setCards] = useState([
-    { key: uuid(), id: 1, title: "Card 1", content: "This is card 1", columnId: "column-1" },
-    { key: uuid(), id: 2, title: "Card 2", content: "This is card 2", columnId: "column-1" },
-    { key: uuid(), id: 3, title: "Card 3", content: "This is card 3", columnId: "column-2" },
-    { key: uuid(), id: 4, title: "Card 4", content: "This is card 4", columnId: "column-3" },
+    { id: 12, title: "Card 1", content: "This is card 1", columnId: "column-1" },
+    { id: 22, title: "Card 2", content: "This is card 2", columnId: "column-1" },
+    { id: 23, title: "Card 3", content: "This is card 3", columnId: "column-2" },
+    { id: 44, title: "Card 4", content: "This is card 4", columnId: "column-3" },
   ]);
   const [dragging, setDragging] = useState(false);
 
