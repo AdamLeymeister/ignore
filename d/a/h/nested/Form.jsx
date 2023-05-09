@@ -1,16 +1,17 @@
 import React, { useEffect, useRef } from "react";
 import { TabulatorFull as Tabulator } from "tabulator-tables";
 import { tableData } from "./data";
+import {replaceNullValues} from './useReplaceNulls'
 import "tabulator-tables/dist/css/tabulator.min.css";
 import "./TestTable.css";
 
 const TestTable = () => {
   const tableRef = useRef(null);
-
+  const mockData = replaceNullValues(tableData)
+  console.log(mockData)
   useEffect(() => {
-    if (tableRef.current) {
       const table = new Tabulator(tableRef.current, {
-        data: tableData,
+        data: mockData || [],
         layout: "fitData",
         columns: [
           { title: "ID", field: "id" },
@@ -18,47 +19,52 @@ const TestTable = () => {
           {
             title: "Friends",
             field: "friends",
-            formatter: function (cell, formatterParams, onRendered) {
+            formatter: (cell) => {
               const friends = cell.getValue();
-              console.log(friends);
-              const friendNames = friends.map((friend) => friend.name);
-              return friendNames.join(", ");
+              const container = friends.reduce((acc, friend) => {
+                const div = document.createElement("div");
+                div.textContent = friend.name;
+                div.classList.add("label");
+                acc.appendChild(div);
+                return acc;
+              }, document.createElement("div"));
+              return container;
             },
           },
           {
             title: "Checkbox",
             field: "friends",
-            formatter: function (cell, formatterParams, onRendered) {
+            formatter: (cell) => {
               const friends = cell.getValue();
-
-              // Create a container element to hold the checkboxes
-              const checkboxContainer = document.createElement("div");
-
-              // Loop through each friend and create a checkbox for each
-              for (const friend of friends) {
+              const checkboxes = friends.map((friend) => {
                 const checkbox = document.createElement("input");
                 checkbox.type = "checkbox";
                 checkbox.addEventListener("click", () => {
-                  console.log("Clicked");
+                    friend.isAdded = checkbox.checked;
+                  console.log(friend.name + ' isAdded: ' + friend.isAdded);
+
                 });
-                checkboxContainer.appendChild(checkbox);
 
                 const label = document.createElement("label");
                 label.textContent = friend.name;
-                checkboxContainer.appendChild(label);
 
-                checkboxContainer.appendChild(document.createElement("br"));
-              }
-              return checkboxContainer;
+                return [checkbox, label];
+              });
+
+              return checkboxes.flat().reduce((container, element) => {
+                container.appendChild(element);
+                container.classList.add("label");
+                return container;
+              }, document.createElement("div"));
             },
           },
         ],
       });
+
       return () => {
         table.destroy();
       };
-    }
-  }, []);
+  }, [mockData]);
 
   return <div ref={tableRef}></div>;
 };
