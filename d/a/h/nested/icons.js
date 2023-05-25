@@ -18,7 +18,6 @@ const redCrossSvg = `
 </svg>
 `;
 
-
 const TestTable = () => {
     const [selectedRows, setSelectedRows] = useState([]); // store ids of selected rows
     const addIsAddedToFriends = (row) => {
@@ -35,6 +34,7 @@ const TestTable = () => {
       data: data || [],
       layout: "fitData",
       selectable: true,
+      virtualDom: true,  // enable virtual DOM
       columns: [
         { title: "ID", field: "id" },
         { title: "Name", field: "name" },
@@ -56,26 +56,25 @@ const TestTable = () => {
         {
           title: "Checkbox",
           field: "friends",
-formatter: (cell, formatterParams, onRendered) => {
-  const friends = cell.getValue();
-  const icons = friends.map((friend) => {
-    const div = document.createElement("div");
-    div.innerHTML = friend.isAdded ? greenCheckSvg : redCrossSvg;
-    div.addEventListener("click", (e) => {
-      e.stopPropagation(); // prevent row click event from firing
-      friend.isAdded = !friend.isAdded;
-      setData([...data]); // This triggers a re-render with the updated data
-    });
-    return div;
-  });
+          formatter: (cell, formatterParams, onRendered) => {
+            const friends = cell.getValue();
+            const icons = friends.map((friend) => {
+              const div = document.createElement("div");
+              div.innerHTML = friend.isAdded ? greenCheckSvg : redCrossSvg;
+              div.addEventListener("click", (e) => {
+                e.stopPropagation(); // prevent row click event from firing
+                friend.isAdded = !friend.isAdded;
+                setData([...data]); // This triggers a re-render with the updated data
+              });
+              return div;
+            });
 
-  return icons.reduce((container, element) => {
-    container.appendChild(element);
-    container.classList.add("label");
-    return container;
-  }, document.createElement("div"));
-},
-
+            return icons.reduce((container, element) => {
+              container.appendChild(element);
+              container.classList.add("label");
+              return container;
+            }, document.createElement("div"));
+          },
         },
       ],
       rowSelected: function(row) { 
@@ -90,7 +89,6 @@ formatter: (cell, formatterParams, onRendered) => {
 
     // re-select rows after re-render
     selectedRows.forEach(rowId => {
-        console.log("44")
       let row = table.getRow(rowId);
       if (row) {
         row.select();
