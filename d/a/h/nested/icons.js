@@ -98,7 +98,7 @@ const TestTable = () => {
     return () => {
       table.destroy();
     };
-  }, [data, selectedRows]);
+  }, [data, selectedRows, submitData]);
 
   const submitData = async () => {
     try {
