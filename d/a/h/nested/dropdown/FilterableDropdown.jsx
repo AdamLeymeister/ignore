@@ -17,14 +17,19 @@ function FilterableDropdown({ options, onOptionSelected, labelKey }) {
   const classes = useStyles();
   const [value, setValue] = useState('');
   const [open, setOpen] = useState(false);
+  const [hasTyped, setHasTyped] = useState(false);
   const [filteredOptions, setFilteredOptions] = useState(options);
   const anchorRef = useRef(null);
 
   useEffect(() => {
-    setFilteredOptions(
-      options.filter((option) => option[labelKey].toLowerCase().includes(value.toLowerCase()))
-    );
-  }, [value, options, labelKey]);
+    if(hasTyped) {
+      setFilteredOptions(
+        options.filter((option) => option[labelKey].toLowerCase().includes(value.toLowerCase()))
+      );
+    } else {
+      setFilteredOptions(options);
+    }
+  }, [value, options, labelKey, hasTyped]);
 
   const handleOptionClick = (option) => {
     setValue(option[labelKey]);
@@ -38,9 +43,11 @@ function FilterableDropdown({ options, onOptionSelected, labelKey }) {
         <TextField
           value={value}
           onClick={() => setOpen(true)}
-          onChange={(e) => setValue(e.target.value)}
+          onChange={(e) => {
+            setValue(e.target.value);
+            setHasTyped(true);
+          }}
           ref={anchorRef}
-          placeholder="Options"
         />
         <Popper open={open} anchorEl={anchorRef.current} role={undefined} placement="bottom-start">
           <Paper className={classes.dropdown}>
