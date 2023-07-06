@@ -1,12 +1,12 @@
 import FilterableDropdown from './FilterableDropdown';
 
+
 function App() {
-  const options = [
-    { id: 1, name: 'Option1', otherData: [1, 2, 3] },
-    { id: 2, name: 'Option2', otherData: [4, 5, 6] },
-    { id: 3, name: 'Option3', otherData: [4, 5, 6] },
-    { id: 4, name: 'Option4', otherData: [4, 5, 6] },
-    { id: 5, name: 'Option5', otherData: [4, 5, 6] },
+  const data = [
+    { id: 1, name: 'Apple', type: ['red', 'blue'] },
+    { id: 2, name: 'Carrot', type: ['red', 'green'] },
+    { id: 3, name: 'Banana', type: 'yellow' },
+    { id: 4, name: 'Broccoli', type: ['black', 'yellow'] },
   ];
 
   const handleOptionSelected = (option) => {
@@ -15,9 +15,12 @@ function App() {
   return (
     <div className="App">
     <FilterableDropdown
-      options={options}
+      options={data}
       onOptionSelected={handleOptionSelected}
       labelKey="name"
+      dropdownDirection="bottom"
+      isNested={true}
+      nameType="type"
     />
     </div>
   );
