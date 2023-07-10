@@ -23,7 +23,8 @@ function FilterableDropdown({
   labelKey, 
   dropdownDirection, 
   isNested = false, 
-  nameType = "" 
+  nameType = "",
+  defaultValue = null 
 }) {
   const classes = useStyles();
   const [value, setValue] = useState('');
@@ -43,6 +44,9 @@ const groupedOptions = options.reduce((groups, option) => {
   return groups;
 }, {});
 
+  useEffect(() => {
+    setValue(defaultValue ? defaultValue : '');
+  }, [defaultValue]);
 
   useEffect(() => {
     if(hasTyped) {
@@ -93,6 +97,12 @@ return (
       />
       <Popper open={open} anchorEl={anchorRef.current} role={undefined} placement={placement} style={{ width: anchorRef?.current?.offsetWidth }}>
         <Paper className={classes.dropdown}>
+                  <MenuItem
+                    key={value}
+                    onClick={() => handleOptionClick({name:'all'})}
+                  >
+                    All
+                    </MenuItem>
           {isNested ? 
             Object.entries(filteredGroupedOptions).map(([group, items]) => (
               <React.Fragment key={group}>
