@@ -6,6 +6,7 @@ import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import Popper from '@material-ui/core/Popper';
 import Paper from '@material-ui/core/Paper';
 import { makeStyles } from '@material-ui/core/styles';
+import { InputAdornment } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   dropdown: {
@@ -94,6 +95,21 @@ return (
           setHasTyped(true);
         }}
         ref={anchorRef}
+          InputProps={{
+    endAdornment: (
+      <InputAdornment position="end">
+        {open ? 
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="grey" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="18 15 12 9 6 15"></polyline>
+          </svg> 
+          : 
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="grey" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        }
+      </InputAdornment>
+    ),
+  }}placeholder="Choose an option"
       />
       <Popper open={open} anchorEl={anchorRef.current} role={undefined} placement={placement} style={{ width: anchorRef?.current?.offsetWidth }}>
         <Paper className={classes.dropdown}>
