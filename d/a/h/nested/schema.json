@@ -1,0 +1,42 @@
+{
+    "fields": [
+        {
+            "type": "text",
+            "name": "firstName",
+            "label": "First Name",
+            "initialValue": "",
+            "validation": {
+                "required": true
+            }
+        },
+        {
+            "type": "checkbox",
+            "name": "terms",
+            "label": "Accept terms and conditions",
+            "initialValue": false,
+            "validation": {
+                "required": true
+            }
+        },
+        {
+            "type": "radio",
+            "name": "gender",
+            "label": "Gender",
+            "initialValue": "",
+            "options": [
+                "Male",
+                "Female"
+            ],
+            "validation": {
+                "required": true
+            }
+        },
+        {
+            "type": "dropdown",
+            "name": "country",
+            "label": "Country",
+            "initialValue": "",
+            "apiEndpoint": "google.com"
+        }
+    ]
+}
