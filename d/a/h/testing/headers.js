@@ -56,3 +56,27 @@ function TableOne() {
 }
 
 export default TableOne;
+
+CREATE PROCEDURE DynamicTableWrite
+    @TableName NVARCHAR(128),
+    @Data NVARCHAR(1000)
+AS
+BEGIN
+    DECLARE @SQL NVARCHAR(MAX);
+
+    IF @TableName = 'Table1'
+    BEGIN
+        SET @SQL = N'INSERT INTO Table1 (Column1) VALUES (@Data)';
+    END
+    ELSE IF @TableName = 'Table2'
+    BEGIN
+        SET @SQL = N'INSERT INTO Table2 (Column1, Column2) VALUES (@Data, @Data)';
+    END
+    ELSE
+    BEGIN
+        THROW 50000, 'Invalid table name', 1;
+    END
+
+    -- Execute the dynamic SQL
+    EXEC sp_executesql @SQL, N'@Data NVARCHAR(1000)', @Data = @Data;
+END
