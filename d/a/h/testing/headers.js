@@ -80,3 +80,28 @@ BEGIN
     -- Execute the dynamic SQL
     EXEC sp_executesql @SQL, N'@Data NVARCHAR(1000)', @Data = @Data;
 END
+
+
+
+
+CREATE PROCEDURE DynamicUpdateProcedure
+    @tableName NVARCHAR(128),
+    @colName NVARCHAR(128),
+    @newValue NVARCHAR(128),
+    @condition NVARCHAR(128),
+    @conditionValue NVARCHAR(128)
+AS
+BEGIN
+    DECLARE @sqlCommand NVARCHAR(1000)
+
+    IF @tableName = 'Table1'
+    BEGIN
+        SET @sqlCommand = N'UPDATE ' + @tableName + N' SET ' + @colName + N' = ' + @newValue + N' WHERE ' + @condition + N' = ' + @conditionValue
+        EXECUTE sp_executesql @sqlCommand
+    END
+    ELSE IF @tableName = 'Table2'
+    BEGIN
+        SET @sqlCommand = N'UPDATE ' + @tableName + N' SET ' + @colName + N' = ' + @newValue + N' WHERE ' + @condition + N' = ' + @conditionValue
+        EXECUTE sp_executesql @sqlCommand
+    END
+END
