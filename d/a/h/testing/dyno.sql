@@ -28,3 +28,12 @@ BEGIN
 
     EXECUTE sp_executesql @sqlCommand
 END
+
+
+
+    SET @sqlCommand = N'UPDATE [testOne].[dbo].[Georgia]
+                            SET 
+                                Name = N''' + @newValue + N'''
+                                , Age = N''' + @MiddleName + N''' 
+                                , MiddleName = N''' + @age + N''' 
+                            WHERE Id = ' + @conditionValue
