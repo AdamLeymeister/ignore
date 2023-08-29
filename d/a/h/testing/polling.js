@@ -40,6 +40,7 @@ function pollUntilCompleted(interval = 5000, maxRetries = 5) {
     });
 }
 
+
 // Example usage:
 pollUntilCompleted(5000, 5)
     .then(data => {

@@ -13,9 +13,10 @@ const PieChartTable2 = () => {
         { title: "Chart", field: "chart", formatter: pieChartFormatter, width: 200 }
       ],
       data: [
-        { name: "John", chart: [{ value: 3, label: "Apples" }, { value: 1, label: "Bananas" }, { value: 4, label: "Cherries" }] },
-        { name: "Jane", chart: [{ value: 5, label: "Apples" }, { value: 2, label: "Bananas" }, { value: 1, label: "Cherries" }] },
-        { name: "Doe", chart: [{ value: 2, label: "Apples" }, { value: 3, label: "Bananas" }, { value: 4, label: "Cherries" }] },
+        { name: "John", chart: [{ value: 3, label: "Apples", status: 1}, { value: 1, label: "Bananas", status: 2 }, { value: 4, label: "Cherries", status: 3}] },
+        { name: "Jane", chart: [{ value: 5, label: "Apples", status: 3 }, { value: 2, label: "Bananas", status: 2}, { value: 1, label: "Cherries", status: 1 }] },
+        { name: "Doe", chart: [{ value: 2, label: "Apples", status: 1}, { value: 3, label: "Bananas", status: 2 }, { value: 4, label: "Cherries", status: 3 }] },
+        { name: "Doe", chart: [{value:4}] },
       ],
     });
   }, []);
@@ -35,18 +36,20 @@ const pieChartFormatter = (cell) => {
   // Initialize the start angle
   let startAngle = 0;
 
-  // Predefined list of colors
-  const colors = [
-    "rgba(255, 99, 132, 0.2)",
-    "rgba(255, 255, 0, 0.2)",
-    "rgba(0, 0, 255, 0.2)",
-    // ... (add more colors here)
-  ];
+  // Status-based colors
+  const statusColors = {
+    1: "green", // status 1 will be green
+    2: "blue",  // status 2 will be blue
+    3: "red"    // status 3 will be red
+  };
 
   // Loop over each data object to draw each slice
   for (let i = 0; i < data.length; i++) {
-    // Use the color based on the position in the array
-    ctx.fillStyle = colors[i % colors.length];
+    // Get the color based on the 'status' property of the data object
+    const sliceColor = statusColors[data[i].status] || "gray";  // Default to "gray" if status is not in [1, 2, 3]
+
+    // Set the fill color for the current slice
+    ctx.fillStyle = sliceColor;
 
     // Begin a new path
     ctx.beginPath();
@@ -76,6 +79,7 @@ const pieChartFormatter = (cell) => {
   // Return the canvas element to be rendered in the cell
   return canvas;
 };
+
 
 
 
