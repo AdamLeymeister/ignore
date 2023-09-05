@@ -9,7 +9,7 @@ const endpointURL = 'https://example.com/check-status';
 function pollUntilCompleted(interval = 5000, maxRetries = 5) {
     return new Promise((resolve, reject) => {
         let retryCount = 0;
-
+//comment
         const checkStatus = () => {
             axios.get(endpointURL)
                 .then(response => {
