@@ -7,24 +7,32 @@ const PieChart = ({ data, width = 200, height = 200 }) => {
   const [arcs, setArcs] = useState([]);
   const [tooltip, setTooltip] = useState({ show: false, anchorEl: null, text: '' });
 
-  useEffect(() => {
-    const pie = d3.pie().value(d => d.value);
+useEffect(() => {
+    const pie = d3.pie()
+        .value(d => d.value)
+        .sort((a, b) => a.status - b.status) 
+        .startAngle(-Math.PI / 2)  
+        .endAngle(Math.PI * 1.5);   
+
     setArcs(pie(data));
-  }, [data]);
+}, [data]);
+
+
 
   const radius = Math.min(width, height) / 2;
   const arcGenerator = d3.arc().innerRadius(0).outerRadius(radius);
 
-  const color = d3.scaleOrdinal()
+const color = d3.scaleOrdinal()
     .domain(data.map(d => d.status))
-    .range(["green", "blue", "red"]);
+    .range(["green", "red", "yellow"]); 
+
 
   const handleMouseOver = (arc, event) => {
     event.currentTarget.setAttribute('opacity', 0.7);
     setTooltip({
       show: true,
       anchorEl: event.currentTarget,
-      text: `${arc.data.label}: ${arc.data.value}`
+      text: `${arc.data.label}`
     });
   };
 
@@ -37,24 +45,27 @@ const PieChart = ({ data, width = 200, height = 200 }) => {
     <>
       <svg width={width} height={height}>
         <g transform={`translate(${width / 2}, ${height / 2})`}>
-          {arcs.map((arc, index) => (
+        {arcs.map((arc, index) => (
             <g key={index}>
-              <path 
-                d={arcGenerator(arc)} 
-                fill={color(arc.data.status)}
-                onMouseOver={(e) => handleMouseOver(arc, e)}
-                onMouseOut={(e) => handleMouseOut(e)}
-              />
-              <text 
-                transform={`translate(${arcGenerator.centroid(arc)})`} 
-                dy="0.35em" 
-                textAnchor="middle"
-                fontSize={(radius / 5)}
-              >
-                {arc.data.label}
-              </text>
+                <path 
+                    d={arcGenerator(arc)} 
+                    fill={color(arc.data.status)}
+                    onMouseOver={(e) => handleMouseOver(arc, e)}
+                    onMouseOut={(e) => handleMouseOut(e)}
+                />
+                {/* Only display the label if the value isn't 0 */}
+                {arc.data.value !== 0 && (
+                    <text 
+                        transform={`translate(${arcGenerator.centroid(arc)})`} 
+                        dy="0.35em" 
+                        textAnchor="middle"
+                        fontSize={(radius / 5)}
+                    >
+                        {arc.data.label}
+                    </text>
+                )}
             </g>
-          ))}
+        ))}
         </g>
       </svg>
       <Popper open={tooltip.show} anchorEl={tooltip.anchorEl}>
