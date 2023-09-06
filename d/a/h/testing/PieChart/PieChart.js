@@ -1,45 +1,46 @@
 import React from 'react';
 import './App.css';
+import PieChartTable2 from './PieChart/PieChartObjects';
 import PieChartCommon from './PieChart/PieChartCommon';
 
 function App() {
   const [selectedRow, setSelectedRow] = React.useState(null);
 
-  const newRow = {
+  const newMockData = {
     column1: 'John',
-    column2: [{ value: 3, label: "Apples", status:1 }, {stats: 3, value: 2, label: "Bananas" }, { status: 2,value: 4, label: "Cherries" }],
-    column3: [{ value: 2, label: "Apples", status:1 }, {stats: 3, value: 2, label: "Bananas" }, { status: 2,value: 4, label: "Cherries" }],
-    column4: [{ value: 3, label: "Apples", status:1 }, {stats: 3, value: 2, label: "Bananas" }, { status: 2,value: 4, label: "Cherries" }],
+    column2: {goodPercent: 50, badPercent: 50, neutralPercent: 0, goodCount: 3, badCount: 2, neutralCount: 4},
+    column3: {goodPercent: 40, badPercent: 50, neutralPercent: 10, goodCount: 3, badCount: 2, neutralCount: 4},
+    column4: {goodPercent: 20, badPercent: 80, neutralPercent: 0, goodCount: 3, badCount: 2, neutralCount: 4},
     column5: 'stuff',
     column6: 'more stuff',
   }
 
-  const findPieChartColumns = (obj) => {
-  const pieChartColumns = {};
-  // Loop through each property of the object
-  for (const [key, value] of Object.entries(obj)) {
-    // Check if the property is an array
-    if (Array.isArray(value)) {
-      // Check if every item in the array is an object containing 'value' and 'label'
-      if (value.every(item => (typeof item === 'object' && item !== null && 'value' in item && 'label' in item))) {
-        // This is a pie chart column, add to the result object
-        pieChartColumns[key] = value;
+const findPieChartColumns = (obj) => {
+    const pieChartColumns = {};
+
+    for (const [key, value] of Object.entries(obj)) {
+      if (value && typeof value === 'object' && 'goodCount' in value && 'badCount' in value && 'neutralCount' in value) {
+        pieChartColumns[key] = [
+          { value: value.goodPercent, label: `${value.goodCount} (${value.goodPercent}%)`, status: 1 },
+          { value: value.badPercent, label: `${value.badCount} (${value.badPercent}%)`, status: 2 },
+          { value: value.neutralPercent, label: `${value.neutralCount} (${value.neutralPercent}%)`, status: 3 }
+        ];
       }
     }
-  }
-  return pieChartColumns;
+
+    return pieChartColumns;
 };
 
 
-
   React.useEffect(() => {
-    setSelectedRow(findPieChartColumns(newRow));
+    setSelectedRow(findPieChartColumns(newMockData));
   }, []); 
 
   return (
     <div className="App">
       <header className="App-header">
-        {selectedRow && Object.keys(selectedRow).map((key,index) => (
+        <PieChartTable2/>
+        {selectedRow && Object.keys(selectedRow).map((key, index) => (
           <div key={index}>
             <h3>{key}</h3>
             <PieChartCommon data={selectedRow[key]} width={100} height={100} />
