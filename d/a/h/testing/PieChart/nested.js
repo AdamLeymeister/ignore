@@ -48,6 +48,7 @@ function restructureData(data) {
     
     console.log('id',groupedById);
     const restructured = Object.values(groupedById).map(group => {
+        console.log('group',group);
         // Sort by version for consistency
         group.sort((a, b) => b.version - a.version);
 
