@@ -7,7 +7,11 @@ const EditButton = () => {
   const columns = [
     { title: "Status", field: "completed", width: 200 },
     { title: "Id", field: "id", width: 50 },
-    { title: "Title", field: "title" },
+    {
+      title: "Title",
+      field: "title",
+      mutator: (value, data) => value ?? "Not Specified", // If 'completed' is null or undefined, default to 'Not Specified'
+    },
   ];
 
   const [isOpen, setIsOpen] = useState(false);
@@ -40,6 +44,7 @@ const EditButton = () => {
   const moveRows = (fromTable, toTable, setFromTableData, setToTableData) => {
     const selectedRows = fromTable.getSelectedRows();
     const selectedData = selectedRows.map((row) => row.getData());
+    const selectedIds = new Set(selectedData.map((data) => data.id));
 
     // Add selected rows to the destination table
     toTable.updateOrAddData(selectedData).then(() => {
@@ -52,7 +57,7 @@ const EditButton = () => {
 
     // Remove the selected data from the source state as well
     setFromTableData((prevData) =>
-      prevData.filter((data) => !selectedData.includes(data))
+      prevData.filter((data) => !selectedIds.has(data.id))
     );
   };
 
@@ -78,6 +83,11 @@ const EditButton = () => {
     }
   };
 
+  const filterOutById = (data, filter) => {
+    return data.filter(
+      (item) => !filter.some((filterItem) => filterItem.id === item.id)
+    );
+  };
   return (
     <>
       <Button onClick={handleOpen}>Edit</Button>
