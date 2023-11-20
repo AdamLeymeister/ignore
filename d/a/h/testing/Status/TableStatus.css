@@ -1,0 +1,22 @@
+.tableStatusGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); 
+  gap: 10px;
+}
+
+.column {
+  display: flex;
+  flex-direction: column; 
+  gap: 0.5rem; 
+  background-color: #3d3d3d;
+}
+.column .MuiButton-root {
+  margin: 0;
+  padding: 0.5rem;
+  white-space: nowrap;
+  overflow: hidden; 
+  text-overflow: ellipsis;
+  display: block; 
+  width: 100%;
+}
+
