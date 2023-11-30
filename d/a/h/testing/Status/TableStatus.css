@@ -1,22 +1,42 @@
-.tableStatusGrid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr); 
-  gap: 10px;
+/* Custom CSS to style the Material-UI table */
+
+/* Style for the table container */
+.MuiPaper-root {
+  margin: 16px;
+  max-width: 800px;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
 }
 
-.column {
-  display: flex;
-  flex-direction: column; 
-  gap: 0.5rem; 
-  background-color: #3d3d3d;
+/* Style for the table headers */
+.MuiTableHead-root {
+  background-color: #f2f2f2;
 }
-.column .MuiButton-root {
-  margin: 0;
-  padding: 0.5rem;
-  white-space: nowrap;
-  overflow: hidden; 
-  text-overflow: ellipsis;
-  display: block; 
+
+/* Style for table cells */
+.MuiTableCell-root {
+  border-bottom: 1px solid #e0e0e0;
+  padding: 12px;
+  text-align: center;
+}
+
+/* Style for the filter input fields */
+.MuiTextField-root {
   width: 100%;
+  margin: 8px;
 }
 
+/* Style for the search icon in the filter input fields */
+.MuiSvgIcon-root {
+  fill: #555;
+}
+
+/* Style for table rows */
+.MuiTableRow-root {
+  transition: background-color 0.3s ease;
+}
+
+/* Hover effect on table rows */
+.MuiTableRow-root:hover {
+  background-color: #f7f7f7;
+}
