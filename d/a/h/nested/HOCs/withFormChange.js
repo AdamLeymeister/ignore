@@ -51,9 +51,16 @@ const withFormChange = (WrappedComponent, queryKey, queryFn) => {
             .closest(`.${props.formIdentifier} .MuiInputBase-root`)
             .querySelector(".MuiOutlinedInput-notchedOutline");
           if (textField) {
-            textField.style.borderColor = changedFields[fieldName]
-              ? "yellow"
-              : "";
+            if (
+              props.requiredFields &&
+              props.requiredFields.includes(fieldName)
+            ) {
+              textField.style.borderColor = form[fieldName] ? "green" : "red";
+            } else {
+              textField.style.borderColor = changedFields[fieldName]
+                ? "yellow"
+                : "";
+            }
           }
         }
       });
@@ -75,7 +82,8 @@ const withFormChange = (WrappedComponent, queryKey, queryFn) => {
           }
         }
       });
-    }, [changedFields, props.formIdentifier]);
+    }, [changedFields, form, props.formIdentifier, props.requiredFields]);
+
     return (
       <div className={props.formIdentifier}>
         {isSuccess && (
