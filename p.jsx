@@ -1,18 +1,26 @@
-import React, { useState, useEffect } from "react";
-import { ListItem, Paper } from "@mui/material";
-import Keypad from '../../modalButton/Keypad';
-import { getKeypadData } from "./keypadService";
-import { useKeys } from './keyStore'
-import { useQuery } from "react-query"; 
+*** Keywords ***
+Wait For Modal To Close
+    Wait Until Element Is Not Visible    locator_for_modal    timeout=10
 
-  const { keys, setKeys } = useKeys();
-  const { isLoading, error } = useQuery({
-    queryKey: ['keys'],
-    queryFn: getKeypadData,
-    onSuccess: (res) => setKeys(res),
-  })
+Click And Verify Header Filter
+    [Arguments]    ${header_filter_locator}
+    Wait Until Element Is Visible    ${header_filter_locator}    timeout=10
+    Click Element    ${header_filter_locator}
 
-  if (isLoading) return <p>Loading...</p>;
-  if (error) return <p>Error: {error.message}</p>;
 
-  table
+Wait For Condition return (window.jQuery != null) && (jQuery.active == 0) timeout=15
+
+  
+*** Keywords ***
+Wait For Text To Change
+    [Arguments]    ${locator}    ${expected_text}    ${timeout}
+    ${start_time}=    Get Time    epoch
+    :FOR    ${current_time}=    ${start_time}    TO    ${start_time}+${timeout}
+    \    ${text}=    Get Text    ${locator}
+    \    Exit For Loop If    '${text}' == '${expected_text}'
+    \    Sleep    1s
+    \    ${current_time}=    Get Time    epoch
+    \    Run Keyword If    ${current_time} - ${start_time} > ${timeout}    Fail    Timeout waiting for text to change
+
+Wait Until Element Is Not Visible    ${loader_locator}    timeout=15
+Wait Until Element Is Visible       ${updated_element_locator}    timeout=15
