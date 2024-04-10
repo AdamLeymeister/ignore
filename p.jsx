@@ -50,3 +50,11 @@ Scroll To And Wait Until Row Is Updated
     \    Execute Javascript    ${script}
     \    Sleep    1s    # Give time for the table to render new rows
     Run Keyword If    not ${is_target_row}    Fail    Row not found within the given timeout
+
+
+
+*** Keywords ***
+Get Tabulator Header Input Value By XPath
+    [Arguments]    ${input_xpath}
+    ${input_value}=    Execute JavaScript    return document.evaluate("${input_xpath}", document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue.value;
+    [Return]    ${input_value}
