@@ -1,3 +1,48 @@
+Set Filter Field
+    [Arguments]    ${filter_xpath}    ${filter_value}
+    Input Text    ${filter_xpath}    ${filter_value}
+    ${current_value}=    Get Value    ${filter_xpath}
+    Should Be Equal    ${current_value}    ${filter_value}
+   
+Apply Filters
+    [Arguments]    &{filters}
+    FOR    ${filter_xpath}    IN    &{filters}
+        ${filter_value}=    Get From Dictionary    ${filters}    ${filter_xpath}
+        Wait Until Keyword Succeeds    15s    1s    Set Filter Field    ${filter_xpath}    ${filter_value}
+    END
+
+
+
+*** Keywords ***
+Click Element Safely
+    [Arguments]    ${locator}
+    Wait Until Keyword Succeeds    10s    1s    Try Clicking Element    ${locator}
+
+Try Clicking Element
+    [Arguments]    ${locator}
+    ${element}=    Find Element    ${locator}
+    Click Element    ${element}
+    # Optionally add checks to confirm the click took effect if necessary
+
+
+
+*** Keywords ***
+Navigate And Verify
+    Wait Until Keyword Succeeds    20s    2s    Element Should Be Visible    xpath=//div[@id='content-loaded-indicator']
+
+
+
+*** Test Cases ***
+Complete UI Interaction with Reloading Page
+    &{filters}=    Create Dictionary    //input[@name='date']=${current_date}    //input[@name='location']=${desired_location}
+    Apply Filters    &{filters}
+    Navigate And Verify   
+    Click Element Safely    //button[@id='submit-button']
+
+
+
+
+
 
 *** Keywords ***
 Apply Filters And Click Row
