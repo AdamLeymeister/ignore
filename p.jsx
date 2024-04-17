@@ -1,3 +1,47 @@
+*** Keywords ***
+Check And Set All Filters
+    [Arguments]    &{filters}
+    ${all_filters_set}=    Set Variable    True
+    FOR    ${filter_xpath}    IN    &{filters}
+        ${filter_value}=    Get From Dictionary    ${filters}    ${filter_xpath}
+        ${current_value}=    Get Value    ${filter_xpath}
+        Run Keyword If    '${current_value}' != '${filter_value}'    Input Text    ${filter_xpath}    ${filter_value}
+        ${current_value}=    Get Value    ${filter_xpath}
+        Run Keyword Unless    '${current_value}' == '${filter_value}'
+        \    Set Variable    False
+    END
+    [Return]    ${all_filters_set}
+
+
+
+
+*** Keywords ***
+Ensure All Filters Are Set Correctly
+    [Arguments]    &{filters}    ${timeout}=2 min    ${retry_interval}=15s
+    Wait Until Keyword Succeeds    ${timeout}    ${retry_interval}    Check And Set All Filters    &{filters}
+
+
+
+
+
+*** Test Cases ***
+Set Filters And Verify
+    &{filters}=    Create Dictionary    //input[@name='date']=${current_date}    //input[@name='location']=${desired_location}    //input[@name='type']=${event_type}
+    Ensure All Filters Are Set Correctly    &{filters}
+    # Further actions assuming all filters are set correctly
+
+
+
+
+
+
+
+
+
+
+
+
+
 Set Filter Field
     [Arguments]    ${filter_xpath}    ${filter_value}
     Input Text    ${filter_xpath}    ${filter_value}
