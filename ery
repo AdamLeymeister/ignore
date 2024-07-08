@@ -1,0 +1,170 @@
+
+
+    {
+        "key": "h",
+        "command": "vim.remap",
+        "args": {
+            "after": ["j"],
+            "overrides": true
+        },
+        "when": "editorTextFocus && (vim.mode == 'Normal' || vim.mode == 'Visual' || vim.mode == 'VisualLine')"
+    },
+    {
+        "key": "t",
+        "command": "vim.remap",
+        "args": {
+            "after": ["k"],
+            "overrides": true
+        },
+        "when": "editorTextFocus && (vim.mode == 'Normal' || vim.mode == 'Visual' || vim.mode == 'VisualLine')"
+    },
+    {
+        "key": "n",
+        "command": "vim.remap",
+        "args": {
+            "after": ["l"],
+            "overrides": true
+        },
+        "when": "editorTextFocus && (vim.mode == 'Normal' || vim.mode == 'Visual' || vim.mode == 'VisualLine')"
+    },
+    {
+        "key": "d",
+        "command": "vim.remap",
+        "args": {
+            "after": ["h"],
+            "overrides": true
+        },
+        "when": "editorTextFocus && (vim.mode == 'Normal' || vim.mode == 'Visual' || vim.mode == 'VisualLine')"
+    },
+    
+    {
+        "key": "e",
+        "command": "vim.remap",
+        "args": {
+            "after": ["d"],
+            "overrides": true
+        },
+        "when": "editorTextFocus && (vim.mode == 'Normal' || vim.mode == 'Visual' || vim.mode == 'VisualLine')"
+    },
+    {
+        "key": "r",
+        "command": "vim.remap",
+        "args": {
+            "after": ["o"],
+            "overrides": true
+        },
+        "when": "editorTextFocus && (vim.mode == 'Normal' || vim.mode == 'Visual' || vim.mode == 'VisualLine')"
+    },
+    {
+        "key": "shift+r",
+        "command": "vim.remap",
+        "args": {
+            "after": ["shift+o"],
+            "overrides": true
+        },
+        "when": "editorTextFocus && (vim.mode == 'Normal' || vim.mode == 'Visual' || vim.mode == 'VisualLine')"
+    },
+    {
+        "key": "l",
+        "command": "vim.remap",
+        "args": {
+            "after": ["n"],
+            "overrides": true
+        },
+        "when": "editorTextFocus && (vim.mode == 'Normal' || vim.mode == 'Visual' || vim.mode == 'VisualLine')"
+    },
+    {
+        "key": "shift+l",
+        "command": "vim.remap",
+        "args": {
+            "after": ["shift+n"],
+            "overrides": true
+        },
+        "when": "editorTextFocus && (vim.mode == 'Normal' || vim.mode == 'Visual' || vim.mode == 'VisualLine')"
+    },
+    {
+        "key": ".",
+        "command": "vim.remap",
+        "args": {
+            "after": ["e"],
+            "overrides": true
+        },
+        "when": "editorTextFocus && (vim.mode == 'Normal' || vim.mode == 'Visual' || vim.mode == 'VisualLine')"
+    },
+    {
+        "key": ",",
+        "command": "vim.remap",
+        "args": {
+            "after": ["b"],
+            "overrides": true
+        },
+        "when": "editorTextFocus && (vim.mode == 'Normal' || vim.mode == 'Visual' || vim.mode == 'VisualLine')"
+    },
+
+
+    {
+        "key": "d",
+        "command": "vim.remap",
+        "args": {
+            "after": ["h"],
+            "overrides": true
+        },
+        "when": "editorTextFocus && (vim.mode == 'Normal' || vim.mode == 'Visual')"
+    },
+    {
+        "key": "e",
+        "command": "vim.remap",
+        "args": {
+            "after": ["d"],
+            "overrides": true
+        },
+        "when": "editorTextFocus && (vim.mode == 'Normal' || vim.mode == 'Visual')"
+    },
+    {
+        "key": "u",
+        "command": "vim.remap",
+        "args": {
+            "after": ["/"],
+            "overrides": true
+        },
+        "when": "editorTextFocus && (vim.mode == 'Normal' || vim.mode == 'Visual' || vim.mode == 'VisualLine')"
+    },
+
+    {
+        "key": "shift+u",
+        "command": "vim.remap",
+        "args": {
+            "after": ["shift+/"],
+            "overrides": true
+        },
+        "when": "editorTextFocus && (vim.mode == 'Normal' || vim.mode == 'Visual' || vim.mode == 'VisualLine')"
+    },
+    {
+        "key": "g",
+        "command": "vim.remap",
+        "args": {
+            "after": ["u"],
+            "overrides": true
+        },
+        "when": "editorTextFocus && (vim.mode == 'Normal' || vim.mode == 'Visual' || vim.mode == 'VisualLine')"
+    },
+
+    {
+        "key": "shift+g",
+        "command": "vim.remap",
+        "args": {
+            "after": ["shift+u"],
+            "overrides": true
+        },
+        "when": "editorTextFocus && (vim.mode == 'Normal' || vim.mode == 'Visual' || vim.mode == 'VisualLine')"
+    },
+        {
+        "key": "CapsLock",
+        "command": "vim.remap",
+        "args": {
+            "after": ["<Esc>"],
+            "overrides": true
+        },
+        "when": "editorTextFocus && (vim.mode == 'Normal' || vim.mode == 'Insert' || vim.mode == 'Visual' || vim.mode == 'VisualLine' || vim.mode == 'VisualBlock')"
+    },
+  
