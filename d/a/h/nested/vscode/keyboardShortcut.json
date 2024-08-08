@@ -1,0 +1,8 @@
+{
+    "key": "ctrl+shift+r",
+    "command": "editor.action.insertSnippet",
+    "args": {
+        "name": "Substitute Command"
+    },
+    "when": "editorTextFocus && vim.mode == 'Normal'"
+}

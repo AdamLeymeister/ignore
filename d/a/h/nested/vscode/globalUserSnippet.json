@@ -1,0 +1,7 @@
+{
+    "Substitute Command": {
+        "prefix": "subcmd",
+        "body": ":${1:%s/}${2:pattern}/${3:replacement}/gc",
+        "description": "Vim substitute command with placeholders"
+    }
+}
