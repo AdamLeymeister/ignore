@@ -1,0 +1,13 @@
+function generateColor(number) {
+    // Normalize the number to a value between 0 and 255
+    const r = (number * 123) % 256; // Generate a red component
+    const g = (number * 56) % 256;  // Generate a green component
+    const b = (number * 89) % 256;  // Generate a blue component
+    
+    // Return the color in the RGB format
+    return `rgb(${r}, ${g}, ${b})`;
+}
+
+// Example usage
+console.log(generateColor(1)); // Output: rgb(123, 56, 89)
+console.log(generateColor(2)); // Output: rgb(246, 112, 178)
