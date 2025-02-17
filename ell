@@ -1,73 +1,90 @@
+IF OBJECT_ID('usp_InsertWithForeignKeys') IS NOT NULL
+    DROP PROCEDURE usp_InsertWithForeignKeys;
+GO
 
-import psycopg2
+CREATE PROCEDURE usp_InsertWithForeignKeys 
+    @table_name NVARCHAR(128)
+AS
+BEGIN
+    SET NOCOUNT ON;
 
-def get_table_schema(cursor, table_name):
-    """Retrieve column names and foreign key constraints for the table."""
-    cursor.execute(f"""
-        SELECT column_name, data_type, is_nullable
-        FROM information_schema.columns
-        WHERE table_name = %s;
-    """, (table_name,))
-   
-    columns = cursor.fetchall()
-   
-    cursor.execute(f"""
-        SELECT
-            kcu.column_name,
-            ccu.table_name AS foreign_table,
-            ccu.column_name AS foreign_column
-        FROM
-            information_schema.key_column_usage kcu
-        JOIN
-            information_schema.constraint_column_usage ccu
-        ON
-            kcu.constraint_name = ccu.constraint_name
-        WHERE kcu.table_name = %s;
-    """, (table_name,))
-   
-    foreign_keys = cursor.fetchall()
-   
-    return columns, foreign_keys
+    -- Create a temporary table for foreign key dependencies
+    IF OBJECT_ID('tempdb..#ForeignKeys') IS NOT NULL DROP TABLE #ForeignKeys;
+    CREATE TABLE #ForeignKeys (
+        parent_table NVARCHAR(128),
+        fk_col NVARCHAR(128),
+        fk_table NVARCHAR(128),
+        fk_column NVARCHAR(128)
+    );
 
-def generate_insert_statements(table_name, columns, foreign_keys):
-    """Generate the SQL INSERT statements for the table and its foreign keys."""
-    insert_statements = []
+    -- Populate foreign key relationships dynamically
+    INSERT INTO #ForeignKeys (parent_table, fk_col, fk_table, fk_column)
+    SELECT 
+        KCU1.TABLE_NAME AS parent_table,
+        KCU1.COLUMN_NAME AS fk_col,
+        KCU2.TABLE_NAME AS fk_table,
+        KCU2.COLUMN_NAME AS fk_column
+    FROM INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS RC
+    INNER JOIN INFORMATION_SCHEMA.KEY_COLUMN_USAGE KCU1 
+        ON KCU1.CONSTRAINT_NAME = RC.CONSTRAINT_NAME
+    INNER JOIN INFORMATION_SCHEMA.KEY_COLUMN_USAGE KCU2 
+        ON KCU2.CONSTRAINT_NAME = RC.UNIQUE_CONSTRAINT_NAME;
 
-    # Prepare the INSERT for the main table
-    column_names = [col[0] for col in columns]
-    values = [f"'VALUE_{col[0]}'" for col in columns]  # Replace with actual values
+    -- Recursive CTE to determine insertion order
+    WITH RecursiveFKs AS (
+        SELECT 
+            fk_table, fk_column, 1 AS level
+        FROM #ForeignKeys
+        WHERE parent_table = @table_name
 
-    insert_main = f"INSERT INTO {table_name} ({', '.join(column_names)}) VALUES ({', '.join(values)});"
-    insert_statements.append(insert_main)
+        UNION ALL
 
-    # Prepare INSERTs for foreign tables
-    for fk_col, fk_table, fk_column in foreign_keys:
-        fk_insert = f"INSERT INTO {fk_table} ({fk_column}) VALUES ('VALUE_{fk_column}');"
-        insert_statements.append(fk_insert)
-
-    return insert_statements
-
-def main():
-    conn = psycopg2.connect(
-        dbname="your_db",
-        user="your_user",
-        password="your_password",
-        host="your_host",
-        port="your_port"
+        SELECT 
+            f.fk_table, f.fk_column, r.level + 1
+        FROM #ForeignKeys f
+        INNER JOIN RecursiveFKs r 
+            ON f.parent_table = r.fk_table
     )
-    cursor = conn.cursor()
+    SELECT * INTO #InsertionOrder FROM RecursiveFKs ORDER BY level DESC;
 
-    table_name = input("Enter table name: ")
-    columns, foreign_keys = get_table_schema(cursor, table_name)
-   
-    insert_statements = generate_insert_statements(table_name, columns, foreign_keys)
-   
-    print("\nGenerated INSERT Statements:")
-    for stmt in insert_statements:
-        print(stmt)
+    -- Declare variables for dynamic SQL execution
+    DECLARE @fk_table NVARCHAR(128), @fk_column NVARCHAR(128), @fk_insert NVARCHAR(MAX);
+    
+    -- Loop through foreign keys in order and insert dummy values
+    DECLARE fk_cursor CURSOR FOR
+    SELECT fk_table, fk_column FROM #InsertionOrder;
 
-    cursor.close()
-    conn.close()
+    OPEN fk_cursor;
+    FETCH NEXT FROM fk_cursor INTO @fk_table, @fk_column;
 
-if __name__ == "__main__":
-    main()
+    WHILE @@FETCH_STATUS = 0
+    BEGIN
+        -- Generate and execute the foreign table insert statement
+        SET @fk_insert = 'IF NOT EXISTS (SELECT 1 FROM ' + @fk_table + ' WHERE ' + @fk_column + ' = ''VALUE_' + @fk_column + ''')
+                          INSERT INTO ' + @fk_table + ' (' + @fk_column + ') 
+                          VALUES (''VALUE_' + @fk_column + ''');';
+
+        EXEC sp_executesql @fk_insert;
+        
+        FETCH NEXT FROM fk_cursor INTO @fk_table, @fk_column;
+    END;
+
+    CLOSE fk_cursor;
+    DEALLOCATE fk_cursor;
+
+    -- Generate the main table INSERT statement dynamically
+    DECLARE @sql NVARCHAR(MAX);
+    SET @sql = (SELECT 
+        'INSERT INTO ' + @table_name + ' (' + STRING_AGG(COLUMN_NAME, ', ') + ') VALUES (...);'
+        FROM INFORMATION_SCHEMA.COLUMNS 
+        WHERE TABLE_NAME = @table_name
+    );
+
+    -- Execute the main insert
+    EXEC sp_executesql @sql;
+
+    -- Cleanup temp tables
+    DROP TABLE #ForeignKeys;
+    DROP TABLE #InsertionOrder;
+END;
+GO
