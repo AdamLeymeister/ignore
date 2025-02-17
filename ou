@@ -1,0 +1,36 @@
+DO $$ 
+DECLARE 
+    table_name TEXT := 'your_table';  -- Change this to your target table
+    insert_query TEXT;
+    fk_insert_query TEXT;
+    rec RECORD;
+    rec_fk RECORD;
+BEGIN
+
+    -- Create a temporary table to store foreign key relationships
+    CREATE TEMP TABLE foreign_keys (fk_col TEXT, fk_table TEXT, fk_column TEXT);
+
+    -- Insert foreign key dependencies (Adjust based on actual schema)
+    INSERT INTO foreign_keys (fk_col, fk_table, fk_column) VALUES
+        ('fk_col1', 'foreign_table1', 'foreign_column1'),
+        ('fk_col2', 'foreign_table2', 'foreign_column2'); -- Add more as needed
+
+    -- Recursively insert into foreign key tables
+    FOR rec IN SELECT * FROM foreign_keys LOOP
+        -- Generate and execute the foreign table insert statement
+        fk_insert_query := 'INSERT INTO ' || rec.fk_table || ' (' || rec.fk_column || ') 
+                            VALUES (''VALUE_' || rec.fk_column || ''') 
+                            ON CONFLICT (' || rec.fk_column || ') DO NOTHING;'; 
+        EXECUTE fk_insert_query;
+    END LOOP;
+
+    -- Generate the main table INSERT statement
+    SELECT 'INSERT INTO ' || table_name || ' (' || string_agg(column_name, ', ') || ') VALUES (...);'
+    INTO insert_query
+    FROM information_schema.columns
+    WHERE table_name = table_name;
+
+    -- Execute the main insert
+    EXECUTE insert_query;
+
+END $$;
