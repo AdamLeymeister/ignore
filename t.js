@@ -1,34 +1,23 @@
-function getLatestMessage(messages, time) {
-  let left = 0;
-  let right = messages.length - 1;
-  let result = null;
+function lowerBound(messages, target) {
+  let low = 0;
+  let high = messages.length;
 
-  while (left <= right) {
-    const mid = (left + right) >>> 1;
+  while (low < high) {
+    const mid = (low + high) >>> 1;
 
-    if (messages[mid].timestamp <= time) {
-      result = messages[mid];
-      left = mid + 1;
+    if (messages[mid].time < target) {
+      low = mid + 1;
     } else {
-      right = mid - 1;
+      high = mid;
     }
   }
 
-  return result
+  return low;
+}
 
+function getVisibleMessages(messages, time) {
+  const start = lowerBound(messages, time - 5000);
+  const end = lowerBound(messages, time + 15000);
 
-
-  const currentTime = useTimelineStore(
-    state => state.currentTime
-  );
-
-  const metadata = useMemo(() => {
-    return Object.fromEntries(
-      Object.entries(messageData).map(
-        ([uid, messages]) => [
-          uid,
-          getLatestMessage(messages, currentTime)
-        ]
-      )
-    );
-  }, [messageData, current]
+  return messages.slice(start, end);
+}
